@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import Dropzone from 'react-dropzone'
+import FileDrop from '../../../components/FileDrop';
 
 export default function PodcastEpisodeCreate() {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, control } = useForm();
   const [files, setFiles] = useState([]);
 
   const onSubmit = ({ name, description, transcript, audio_url, video_url }: any) => {
     console.log({ name, description, transcript, audio_url, video_url });
-    // auth.signin(email, password)
-    //   .then((user: any) => history.push("/"))
   }
 
   const onFileUpload = (new_files: any[]) => {
@@ -30,31 +29,6 @@ export default function PodcastEpisodeCreate() {
     const updated_files: any = [...files, ...good_files];
     setFiles(updated_files);
     if (invalid_file) alert("Please upload photos that are either JPEG, PNG, or SVG");
-  }
-
-  const removeFile = (e: any, remove_idx: number) => {
-    e.stopPropagation();
-    const filtered_files = files.filter((_, idx) => idx !== remove_idx);
-    setFiles([...filtered_files]);
-  }
-
-  const displayDropzoneContent = (isDragActive: boolean, _isDragAccept: boolean, _isDragReject: boolean) => {
-    if (isDragActive) {
-      return <p className="text-gray-700">Drop them here!</p>
-    }
-
-    if (files.length > 0) {
-      return files.map((file: any, idx: number) => {
-        return (
-          <div className="flex">
-            <p key={idx} className="text-white mr-2.5">{file.name}</p>
-            <p onClick={(e) => removeFile(e, idx)} className="text-gray-700 cursor-pointer">✕</p>
-          </div>
-        )
-      })
-    }
-
-    return <p className="text-gray-700">Drag 'n' drop some files here, or click to select files</p>
   }
 
 	return (
@@ -109,22 +83,14 @@ export default function PodcastEpisodeCreate() {
               Audio File
             </label>
             <div className="mt-1">
-              <Dropzone onDrop={onFileUpload} multiple={false}>
-                {({getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject}) => (
-                  <section>
-                    <div
-                      className="border-dashed border-4 border-celeste p-4 rounded-md h-12 md:h-full md:min-h-25 grid items-center justify-center"
-                      style={{ minHeight: `8rem` }}
-                      {...getRootProps()}
-                    >
-                      <input {...register('audio_url')} {...getInputProps()}  />
-                      {
-                        displayDropzoneContent(isDragActive, isDragAccept, isDragReject)
-                      }
-                    </div>
-                  </section>
+              <Controller
+                name={`audio_url`}
+                control={control}
+                defaultValue={null}
+                render={({ field: { onChange, value } }: any) => (
+                  <FileDrop files={[value]} setFiles={onChange} onChange={(e: any) => onChange(e.target?.files?.[0]) } multiple={false} />
                 )}
-              </Dropzone>
+              />
             </div>
           </section>
           <section>
@@ -132,22 +98,14 @@ export default function PodcastEpisodeCreate() {
               Video File
             </label>
             <div className="mt-1">
-              <Dropzone onDrop={() => {}} multiple={false}>
-                {({getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject}) => (
-                  <section>
-                    <div
-                      className="border-dashed border-4 border-celeste p-4 rounded-md h-12 md:h-full md:min-h-25 grid items-center justify-center"
-                      style={{ minHeight: `8rem` }}
-                      {...getRootProps()}
-                    >
-                      <input {...register('video_url')} {...getInputProps() } />
-                      {
-                        displayDropzoneContent(isDragActive, isDragAccept, isDragReject)
-                      }
-                    </div>
-                  </section>
+              <Controller
+                name={`video_url`}
+                control={control}
+                defaultValue={null}
+                render={({ field: { onChange, value } }: any) => (
+                  <FileDrop files={[value]} setFiles={onChange} onChange={(e: any) => onChange(e.target?.files?.[0]) } multiple={false} />
                 )}
-              </Dropzone>
+              />
             </div>
           </section>
           <section className="mt-2">
