@@ -32,3 +32,6 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+
+Notes
+Dockerizing the application - https://notiz.dev/blog/dockerizing-nestjs-with-prisma-and-postgresql
